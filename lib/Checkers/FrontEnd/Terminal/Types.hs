@@ -1,3 +1,4 @@
+{-# LANGUAGE RankNTypes #-}
 module Checkers.FrontEnd.Terminal.Types where
 
 -- packages
@@ -21,6 +22,8 @@ type ResourceName = String
   Lenses for TuiState, config.
   This involves manipulating deeply nested data structures, and the use of lenses is more or less unavoidable.
  -}
+
+
 
 -- GameState lenses
 blackPiecesL :: Lens' GameState [Coord]
@@ -74,3 +77,11 @@ configL = lens config (\tuistate newPoint -> tuistate { config = newPoint } )
 
 kingL :: Lens' TuiState Bool
 kingL = lens king (\tuistate newPoint -> tuistate { king = newPoint } )
+
+{-
+    Convenience functions here to cut down on boiler-plate code.
+-}
+
+turnLens :: Player -> Lens' GameConfig PlayerType
+turnLens Red = redMoveL
+turnLens Black = blackMoveL

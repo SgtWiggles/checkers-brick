@@ -20,14 +20,18 @@ import Checkers.FrontEnd.Terminal.Cursor
     In case the player is human, you move to the human loop.
 -}
 handleTuiEvent :: TuiState -> BrickEvent n e -> EventM n (Next TuiState)
-handleTuiEvent s = case view (configL . stateL . statusL) s of
+handleTuiEvent s = case s^. configL . stateL . statusL of
   GameOver -> gameOverTuiEvent s
-  Turn Red -> case view (configL . redMoveL) s of
+  Turn x  -> case s^. configL . turnLens x of
                 Human -> humanTuiEvent s
-                Ai f -> cpuTuiEvent $ set moveL  (f (s^.configL.stateL)) s
-  Turn Black -> case view (configL . redMoveL) s of
-                Human -> humanTuiEvent s
-                Ai f -> cpuTuiEvent $ set moveL  (f (s^.configL.stateL)) s 
+                Ai f -> cpuTuiEvent $  moveL .~ f (s^.configL.stateL) $ s
+
+  -- Turn Red -> case view (configL . redMoveL) s of
+  --               Human -> humanTuiEvent s
+  --               Ai f -> cpuTuiEvent $ set moveL  (f (s^.configL.stateL)) s
+  -- Turn Black -> case view (configL . redMoveL) s of
+  --               Human -> humanTuiEvent s
+  --               Ai f -> cpuTuiEvent $ set moveL  (f (s^.configL.stateL)) s 
 
 gameOverTuiEvent :: TuiState -> BrickEvent n e -> EventM n (Next TuiState)
 gameOverTuiEvent s e =
