@@ -24,14 +24,8 @@ handleTuiEvent s = case s^. configL . stateL . statusL of
   GameOver -> gameOverTuiEvent s
   Turn x  -> case s^. configL . turnLens x of
                 Human -> humanTuiEvent s
-                Ai f -> cpuTuiEvent $  moveL .~ f (s^.configL.stateL) $ s
-
-  -- Turn Red -> case view (configL . redMoveL) s of
-  --               Human -> humanTuiEvent s
-  --               Ai f -> cpuTuiEvent $ set moveL  (f (s^.configL.stateL)) s
-  -- Turn Black -> case view (configL . redMoveL) s of
-  --               Human -> humanTuiEvent s
-  --               Ai f -> cpuTuiEvent $ set moveL  (f (s^.configL.stateL)) s 
+                Ai f  -> cpuTuiEvent $  moveL .~ move $ s
+                  where move = f (s^.configL.stateL)
 
 gameOverTuiEvent :: TuiState -> BrickEvent n e -> EventM n (Next TuiState)
 gameOverTuiEvent s e =
