@@ -59,7 +59,7 @@ drawGrid s = withBorderStyle BS.unicodeBold
   $ vBox [hBox [drawSquare s cursor square | square <- row] | row <- gameBoard]
   where
     cursor = nonEmptyCursorCurrent $ nonEmptyCursorCurrent $ board s
-    ctl = (NE.toList . rebuildNonEmptyCursor)
+    ctl = NE.toList . rebuildNonEmptyCursor
     gameBoard = map ctl $ ctl $ board s
 
 drawStats :: TuiState -> Widget ResourceName
@@ -71,7 +71,9 @@ drawStats s = withBorderStyle BS.unicodeBold
            , statusRow
            , moveRow ]
     msgRow = withAttr plain $ str $ view (configL . stateL . messageL) s
-    statusRow = withAttr plain $ str $ show $ view (configL . stateL . statusL) s
+    statusRow = withAttr plain $ str $ statusString ++ "  King activated:" ++ kingString
+    statusString = show (s^. configL . stateL . statusL) 
+    kingString = show $ s^.kingL
     moveRow = withAttr plain $ str $ show $  view moveL s
 
 
