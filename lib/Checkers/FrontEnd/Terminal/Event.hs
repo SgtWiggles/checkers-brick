@@ -24,8 +24,8 @@ handleTuiEvent s = case s^. configL . stateL . statusL of
   GameOver -> gameOverTuiEvent s
   Turn x  -> case s^. configL . turnLens x of
                 Human -> humanTuiEvent s
-                Ai f  -> cpuTuiEvent $  moveL .~ move $ s
-                  where move = f (s^.configL.stateL)
+                Ai f  -> cpuTuiEvent $  moveL .~ aiMove $ s
+                  where aiMove = f (s^.configL.stateL)
 
 gameOverTuiEvent :: TuiState -> BrickEvent n e -> EventM n (Next TuiState)
 gameOverTuiEvent s e =
@@ -67,10 +67,11 @@ humanTuiEvent s e =
         EvKey KUp [] -> case nonEmptyCursorSelectPrev (view boardL s) of
                             Nothing -> continue s
                             Just s' -> continue $ set boardL s' s
-        EvKey KEnter [] -> continue $ resetMove $ moveFun s
+        EvKey KEnter [] -> continue $ resetMove $ set kingL False $ moveFun s
           where
             moveFun = over (configL . stateL) ((s^.configL.engineL) (s^.moveL))
             resetMove = set moveL []
+
         EvKey (KChar ' ') [] -> continue $ over moveL addPiece $ over kingL kingCheck s
           where
             x :: Coord
