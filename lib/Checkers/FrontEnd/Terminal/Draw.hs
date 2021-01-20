@@ -65,15 +65,14 @@ drawGrid s = withBorderStyle BS.unicodeBold
 drawStats :: TuiState -> Widget ResourceName
 drawStats s = withBorderStyle BS.unicodeBold
   $ B.borderWithLabel (str "Game Info")
-  $ vBox rows
-  where
-    rows = [ msgRow
+  $ vBox   [ msgRow
            , statusRow
+           , kingRow
            , moveRow ]
+  where
     msgRow = withAttr plain $ str $ view (configL . stateL . messageL) s
-    statusRow = withAttr plain $ str $ statusString ++ "  King activated:" ++ kingString
-    statusString = show (s^. configL . stateL . statusL) 
-    kingString = show $ s^.kingL
+    statusRow = withAttr plain $ str $ show (s^. configL . stateL . statusL)
+    kingRow = withAttr plain $ str $ "King activated: " ++ show (s^.kingL)
     moveRow = withAttr plain $ str $ show $  view moveL s
 
 
