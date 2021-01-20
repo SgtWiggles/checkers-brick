@@ -77,7 +77,7 @@ humanTuiEvent s e =
             x :: Coord
             x = accessCursor $ view boardL s
             addPiece :: Move -> Move
-            addPiece l = l ++ [if s^.kingL then K x else P x]
+            addPiece l = l ++ [if kingCheck (s^.kingL) then K x else P x]
             kingCheck :: Bool -> Bool
             kingCheck t = case (s^.moveL, s^.configL.stateL.statusL, x) of
               -- started by choosing a king
